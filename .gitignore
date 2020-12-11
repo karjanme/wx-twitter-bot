@@ -1,0 +1,11 @@
+# Bytecode-Compiled
+__pycache__/
+
+# Distribution / Packaging
+dist/
+
+# Environment
+.env
+
+# Runtime
+log/
