@@ -5,6 +5,7 @@ import sys
 
 from envvarname import EnvVarName
 from tweepy import API, OAuthHandler
+from tasks.solartime import SolarTimeTask
 from util import getEnvVar, isEmpty, loadEnvVars
 
 
@@ -71,6 +72,8 @@ threading.excepthook = threadExceptionHook
 loadEnvVars()
 
 twitterAPI = createTwitterAPI()
+
+SolarTimeTask()
 
 signal.signal(signal.SIGINT, sigintHandler)
 

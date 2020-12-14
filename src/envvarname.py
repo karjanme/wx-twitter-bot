@@ -11,6 +11,11 @@ class EnvVarName(Enum):
         return name
 
     # TODO: Documentation
+    LOCATION = auto()
+    REGION = auto()
+    TIMEZONE = auto()
+    LATITUDE = auto()
+    LONGITUDE = auto()
     TWITTER_CONSUMER_KEY = auto()
     TWITTER_CONSUMER_SECRET = auto()
     TWITTER_ACCESS_TOKEN = auto()
