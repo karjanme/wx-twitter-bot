@@ -35,42 +35,32 @@ class SolarTimeTask(object):
 
         """ Routine that runs forever """
         while True:
+            now = datetime.now(tz=self.location.timezone)
+            today = now.date()
+
+            self.LOGGER.info("Getting solar times for today {}".format(today.isoformat()))
+            solar_time_today = sun(self.location.observer, date=today, tzinfo=self.location.timezone)
+
             # Get prior 'solar_time' from the saved data file
             solar_time_from_file = self._loadSolarTime()
 
             if (solar_time_from_file):
                 noon_from_file = datetime.fromisoformat(solar_time_from_file["noon"])
-                self.LOGGER.info("Got solar times from file for date {}".format(noon_from_file.date().isoformat()))
+                date_from_file = noon_from_file.date()
+                self.LOGGER.info("Got solar times from file for date {}".format(date_from_file.isoformat()))
+                if (today == date_from_file):
+                    self.LOGGER.info("Today is the same as the date from the file.")
+                    self._sleep(solar_time_today)
 
-            now = datetime.now(tz=self.location.timezone)
-            today = now.date()
-            tomorrow = today + timedelta(days=1)
-
-            self.LOGGER.info("Getting solar times for today {}".format(today.isoformat()))
-
-            solar_time_today = sun(self.location.observer, date=today, tzinfo=self.location.timezone)
             sunrise_today = solar_time_today["sunrise"]
-            
-            print("Sunrise: " + sunrise_today.isoformat(timespec='seconds'))
-            print("Noon:    " + solar_time_today["noon"].isoformat(timespec='seconds'))
-            print("Sunset:  " + solar_time_today["sunset"].isoformat(timespec='seconds'))
+            one_hour_before_sunrise_today = sunrise_today - timedelta(hours=1)
+            if (now < one_hour_before_sunrise_today or sunrise_today < now):
+                self.LOGGER.info("Now is not within the hour before sunrise today.")
+                self._sleep(solar_time_today)
 
+            #TWEET and SAVETOFILE, then SLEEP
             self._saveSolarTime(solar_time_today)
-
-            #TODO: sub-routine to figure out sleep time
-            seconds_until_sunrise_today = (sunrise_today - now).total_seconds()
-            if (seconds_until_sunrise_today > 3600):
-                self.LOGGER.info("Sleeping until later today")
-                sleep_seconds = seconds_until_sunrise_today - 3600
-            else:
-                self.LOGGER.info("Sleeping until tomorrow")
-                solar_time_tomorrow = sun(self.location.observer, date=tomorrow, tzinfo=self.location.timezone)
-                sunrise_tomorrow = solar_time_tomorrow['sunrise']
-                seconds_until_sunrise_tomorrow = (sunrise_tomorrow - now).total_seconds()
-                sleep_seconds = seconds_until_sunrise_tomorrow - 3600
-
-            self.LOGGER.info("Sleep for {:.0f} seconds".format(sleep_seconds))
-            time.sleep(sleep_seconds)
+            self._sleep(solar_time_today)
 
 
     def _setup(self):
@@ -99,6 +89,24 @@ class SolarTimeTask(object):
 
     def _getTimeStringForMessage(self, date_time: str) -> str:
         return datetime.fromisoformat(date_time).strftime("%I:%M %p")
+
+
+    def _sleep(self, solar_time_today: Dict) -> None:
+        sunrise_today = solar_time_today["sunrise"]
+        now = datetime.now(tz=self.location.timezone)
+        seconds_until_sunrise_today = (sunrise_today - now).total_seconds()
+        if (seconds_until_sunrise_today > 3600):
+            self.LOGGER.info("Sleeping until later today")
+            sleep_seconds = seconds_until_sunrise_today - 3600
+        else:
+            self.LOGGER.info("Sleeping until tomorrow")
+            tomorrow = now.date() + timedelta(days=1)
+            solar_time_tomorrow = sun(self.location.observer, date=tomorrow, tzinfo=self.location.timezone)
+            sunrise_tomorrow = solar_time_tomorrow['sunrise']
+            seconds_until_sunrise_tomorrow = (sunrise_tomorrow - now).total_seconds()
+            sleep_seconds = seconds_until_sunrise_tomorrow - 3600
+        self.LOGGER.info("Sleep for {:.0f} seconds".format(sleep_seconds))
+        time.sleep(sleep_seconds)
 
 
     def _loadSolarTime(self) -> Dict:
