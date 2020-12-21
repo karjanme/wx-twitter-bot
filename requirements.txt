@@ -1,0 +1,4 @@
+astral==2.2
+python-dotenv==0.13.0
+pytz==2020.1
+tweepy==3.8.0
