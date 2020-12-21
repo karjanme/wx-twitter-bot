@@ -1,4 +1,5 @@
 import logging
+import os
 import threading
 import signal
 import sys
@@ -10,8 +11,10 @@ from util import getEnvVar, isEmpty, loadEnvVars
 
 
 def createLogger():
+    log_filename = "./log/log.txt"
+    os.makedirs(os.path.dirname(log_filename), exist_ok=True)
     logging.basicConfig(
-    filename='./log/log.txt',
+    filename=log_filename,
     format="%(asctime)s | %(threadName)-12.12s | %(levelname)-8.8s | %(message)s",
     level=logging.INFO)
     return logging.getLogger()
