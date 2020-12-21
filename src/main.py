@@ -11,7 +11,10 @@ from util import getEnvVar, isEmpty, loadEnvVars
 
 
 def createLogger():
-    log_filename = "./log/log.txt"
+    log_directory = getEnvVar(EnvVarName.LOG_DIR)
+    if (not(log_directory.endswith("/"))):
+        log_directory += "/"
+    log_filename = log_directory + "wxtwitterbot.log"
     os.makedirs(os.path.dirname(log_filename), exist_ok=True)
     logging.basicConfig(
     filename=log_filename,
@@ -70,9 +73,9 @@ def threadExceptionHook(args):
 
 
 ### MAIN ###
+loadEnvVars()
 LOGGER = createLogger()
 threading.excepthook = threadExceptionHook
-loadEnvVars()
 
 twitterAPI = createTwitterAPI()
 
