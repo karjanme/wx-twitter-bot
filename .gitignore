@@ -3,6 +3,7 @@ __pycache__/
 
 # Distribution / Packaging
 dist/
+*.egg-info/
 
 # Environment
 .env
