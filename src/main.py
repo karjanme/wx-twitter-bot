@@ -17,9 +17,9 @@ def createLogger():
     log_filename = log_directory + "wxtwitterbot.log"
     os.makedirs(os.path.dirname(log_filename), exist_ok=True)
     logging.basicConfig(
-    filename=log_filename,
-    format="%(asctime)s | %(threadName)-12.12s | %(levelname)-8.8s | %(message)s",
-    level=logging.INFO)
+        filename=log_filename,
+        format="%(asctime)s | %(threadName)-12.12s | %(levelname)-8.8s | %(message)s",
+        level=logging.INFO)
     return logging.getLogger()
 
 
