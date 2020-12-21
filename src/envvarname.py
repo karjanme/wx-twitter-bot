@@ -11,6 +11,7 @@ class EnvVarName(Enum):
         return name
 
     # TODO: Documentation
+    LOG_DIR = auto()
     LOCATION = auto()
     REGION = auto()
     TIMEZONE = auto()
