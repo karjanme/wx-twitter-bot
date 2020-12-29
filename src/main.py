@@ -16,19 +16,30 @@ from util import getEnvVar, isEmpty, loadEnvVars
 
 def createLogger():
     log_directory = getEnvVar(EnvVarName.LOG_DIR)
+    if (log_directory is None):
+        log_directory = "./log/"  # Default logging directory
     if (not(log_directory.endswith("/"))):
         log_directory += "/"
     log_filename = log_directory + "wxtwitterbot.log"
     os.makedirs(os.path.dirname(log_filename), exist_ok=True)
+
+    log_format = "%(asctime)s | %(threadName)-12.12s | %(levelname)-8.8s | %(message)s"
+
+    log_level = getEnvVar(EnvVarName.LOG_LEVEL)
+    if (log_level is None):
+        log_level = logging.INFO  # Default logging level
+    else:
+        log_level = log_level.upper()
+
     logging.basicConfig(
         filename=log_filename,
-        format="%(asctime)s | %(threadName)-12.12s | %(levelname)-8.8s | %(message)s",
-        level=logging.INFO)
+        format=log_format,
+        level=log_level)
     return logging.getLogger()
 
 
 def createTwitterAPI():
-    LOGGER.debug("Crearing the Twitter API")
+    LOGGER.debug("Creating the Twitter API")
 
     consumer_key = getEnvVar(EnvVarName.TWITTER_CONSUMER_KEY)
     if (isEmpty(consumer_key)):

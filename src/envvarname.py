@@ -12,6 +12,7 @@ class EnvVarName(Enum):
 
     # TODO: Documentation
     LOG_DIR = auto()
+    LOG_LEVEL = auto()
     LOCATION = auto()
     REGION = auto()
     TIMEZONE = auto()
