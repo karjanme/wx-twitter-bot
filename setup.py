@@ -14,5 +14,5 @@ setuptools.setup(
     url="https://github.com/jnsnkrllive/wx-twitter-bot",
     package_dir={'wxtwitterbot': 'src'},
     packages=['wxtwitterbot'],
-    python_requires='>=3.7',
+    python_requires='>=3.8',
 )
