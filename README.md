@@ -9,6 +9,7 @@ TODO
 | Name | Description |
 | ---- | ----------- |
 | `LOG_DIR` | Specifies the directory where the log file will exist |
+| `LOG_LEVEL` | Specifies the level of logging to use when executing the program |
 
 ## License
 
