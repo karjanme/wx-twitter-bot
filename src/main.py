@@ -24,27 +24,29 @@ def createLogger():
 
 
 def createTwitterAPI():
+    LOGGER.debug("Crearing the Twitter API")
+
     consumer_key = getEnvVar(EnvVarName.TWITTER_CONSUMER_KEY)
     if (isEmpty(consumer_key)):
-        message = "Environment Variable "+EnvVarName.TWITTER_CONSUMER_KEY+" is not set."
+        message = "Environment Variable " + EnvVarName.TWITTER_CONSUMER_KEY + " is not set"
         LOGGER.error(message)
         raise RuntimeError(message)
 
     consumer_secret = getEnvVar(EnvVarName.TWITTER_CONSUMER_SECRET)
     if (isEmpty(consumer_secret)):
-        message = "Environment Variable "+EnvVarName.TWITTER_CONSUMER_SECRET+" is not set."
+        message = "Environment Variable " + EnvVarName.TWITTER_CONSUMER_SECRET + " is not set"
         LOGGER.error(message)
         raise RuntimeError(message)
 
     access_token = getEnvVar(EnvVarName.TWITTER_ACCESS_TOKEN)
     if (isEmpty(access_token)):
-        message = "Environment Variable "+EnvVarName.TWITTER_ACCESS_TOKEN+" is not set."
+        message = "Environment Variable " + EnvVarName.TWITTER_ACCESS_TOKEN + " is not set"
         LOGGER.error(message)
         raise RuntimeError(message)
 
     access_token_secret = getEnvVar(EnvVarName.TWITTER_ACCESS_TOKEN_SECRET)
     if (isEmpty(access_token_secret)):
-        message = "Environment Variable "+EnvVarName.TWITTER_ACCESS_TOKEN_SECRET+" is not set."
+        message = "Environment Variable "+EnvVarName.TWITTER_ACCESS_TOKEN_SECRET + " is not set"
         LOGGER.error(message)
         raise RuntimeError(message)
 
@@ -59,7 +61,8 @@ def createTwitterAPI():
     except Exception as e:
         LOGGER.error("Error creating Twitter API", exc_info=True)
         raise e
-    LOGGER.info("Twitter API created")
+
+    LOGGER.info("Twitter API created successfully")
     return api
 
 
@@ -74,7 +77,7 @@ def threadExceptionHook(args):
 
 ### MAIN ###
 loadEnvVars()
-LOGGER = createLogger()
+LOGGER = createLogger()  # Requires that environment variables are loaded
 threading.excepthook = threadExceptionHook
 
 twitterAPI = createTwitterAPI()
