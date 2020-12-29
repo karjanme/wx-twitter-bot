@@ -33,6 +33,7 @@ class SolarTimeTask(object):
 
 
     def _run(self):
+        self.LOGGER.info("Starting the '" + self._thread.name + "' task")
         self._setup()
 
         """ Routine that runs forever """
@@ -51,14 +52,14 @@ class SolarTimeTask(object):
                 date_from_file = noon_from_file.date()
                 self.LOGGER.info("Got solar times from file for date {}".format(date_from_file.isoformat()))
                 if (self.today == date_from_file):
-                    self.LOGGER.info("Today is the same as the date from the file.")
+                    self.LOGGER.info("Today is the same as the date from the file")
                     self._sleep(solar_time_today)
                     continue
 
             sunrise_today = solar_time_today["sunrise"]
             one_hour_before_sunrise_today = sunrise_today - timedelta(hours=1)
             if (self.now < one_hour_before_sunrise_today or sunrise_today < self.now):
-                self.LOGGER.info("Now is not within the hour before sunrise today.")
+                self.LOGGER.info("Now is not within the hour before sunrise today")
                 self._sleep(solar_time_today)
                 continue
 
@@ -96,7 +97,7 @@ class SolarTimeTask(object):
         solar_time_date = sunrise.date()
 
         if (self.today != solar_time_date):
-            self.LOGGER.warn("The solar times provided are not for today. Skip tweet message.")
+            self.LOGGER.warn("The solar times provided are not for today -- skip tweet message")
             return
 
         message = self._MESSAGE_TEMPLATE.format(
@@ -116,7 +117,7 @@ class SolarTimeTask(object):
         sunrise_today = solar_time_today["sunrise"]
 
         if (self.today != sunrise_today.date()):
-            self.LOGGER.warn("The solar times provided are not for today.")
+            self.LOGGER.warn("The solar times provided are not for today")
 
         seconds_until_sunrise_today = (sunrise_today - self.now).total_seconds()
 
