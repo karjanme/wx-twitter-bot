@@ -16,7 +16,6 @@ from util import getEnvVar, isEmpty
 class SolarTimeTask(object):
 
     LOGGER = logging.getLogger()
-    _DATA_DIR = "./data/solartime/"
     _FILE_EXT = ".json"
     _DATE_FORMAT = "%b %d, %Y"
     _TIME_FORMAT = "%I:%M %p"
@@ -69,25 +68,42 @@ class SolarTimeTask(object):
 
 
     def _setup(self):
-        location = getEnvVar(EnvVarName.LOCATION)
-        region = getEnvVar(EnvVarName.REGION)
-        tz = timezone(getEnvVar(EnvVarName.TIMEZONE))
-        latitude = getEnvVar(EnvVarName.LATITUDE)
-        longitude = getEnvVar(EnvVarName.LONGITUDE)
+        # Data Directory
+        data_dir_root = getEnvVar(EnvVarName.DATA_DIR)
+        if isEmpty(data_dir_root):
+            data_dir_root = "./data/"  # Default data directory
+        if not(data_dir_root.endswith("/")):
+            data_dir_root += "/"
 
-        if isEmpty(location):
-            raise RuntimeError("Missing required environment variable: LOCATION")
+        self._data_dir = data_dir_root + self._thread.name + "/"
+
+        if not(os.path.exists(self._data_dir)):
+            os.makedirs(self._data_dir, exist_ok=True)
+
+        # Region
+        region = getEnvVar(EnvVarName.REGION)
         if isEmpty(region):
             raise RuntimeError("Missing required environment variable: REGION")
+
+        # Timezone
+        tz = timezone(getEnvVar(EnvVarName.TIMEZONE))
         if isEmpty(tz):
             raise RuntimeError("Missing required environment variable: TIMEZONE")
+
+        # Latitude
+        latitude = getEnvVar(EnvVarName.LATITUDE)
         if isEmpty(latitude):
             raise RuntimeError("Missing required environment variable: LATITUDE")
+
+        # Longitude
+        longitude = getEnvVar(EnvVarName.LONGITUDE)
         if isEmpty(longitude):
             raise RuntimeError("Missing required environment variable: LONGITUDE")
-        
-        if not(os.path.exists(self._DATA_DIR)):
-            os.makedirs(self._DATA_DIR)
+
+        # Location
+        location = getEnvVar(EnvVarName.LOCATION)
+        if isEmpty(location):
+            raise RuntimeError("Missing required environment variable: LOCATION")
 
         self.location = LocationInfo(location, region, tz, latitude, longitude)
 
@@ -137,14 +153,14 @@ class SolarTimeTask(object):
 
 
     def _loadSolarTime(self) -> Dict:
-        with open(self._DATA_DIR + "solartime" + self._FILE_EXT, 'r+') as fp:
+        with open(self._data_dir + "solartime" + self._FILE_EXT, 'r+') as fp:
             # TODO: convert datetime string into datetime object
             solar_time = json.load(fp)
             return solar_time
 
 
     def _saveSolarTime(self, solar_time: Dict) -> None:
-        fw = open(self._DATA_DIR + "solartime" + self._FILE_EXT, 'w+')
+        fw = open(self._data_dir + "solartime" + self._FILE_EXT, 'w+')
         json.dump(solar_time, fw, default=self._dumpConverter, indent=2)
         fw.close()
 
