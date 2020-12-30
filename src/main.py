@@ -16,10 +16,11 @@ from util import getEnvVar, isEmpty, loadEnvVars
 
 def createLogger():
     log_directory = getEnvVar(EnvVarName.LOG_DIR)
-    if (log_directory is None):
+    if isEmpty(log_directory):
         log_directory = "./log/"  # Default logging directory
-    if (not(log_directory.endswith("/"))):
+    if not(log_directory.endswith("/")):
         log_directory += "/"
+
     log_filename = log_directory + "wxtwitterbot.log"
     os.makedirs(os.path.dirname(log_filename), exist_ok=True)
 
