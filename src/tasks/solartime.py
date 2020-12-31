@@ -9,6 +9,7 @@ from astral.sun import sun
 from datetime import date, datetime, timedelta
 from envvarname import EnvVarName
 from pytz import timezone
+from twitter import TwitterUtil
 from typing import Dict
 from util import getEnvVar, isEmpty
 
@@ -83,27 +84,27 @@ class SolarTimeTask(object):
         # Region
         region = getEnvVar(EnvVarName.REGION)
         if isEmpty(region):
-            raise RuntimeError("Missing required environment variable: REGION")
+            raise RuntimeError("Missing required environment variable: " + EnvVarName.REGION.name)
 
         # Timezone
         tz = timezone(getEnvVar(EnvVarName.TIMEZONE))
         if isEmpty(tz):
-            raise RuntimeError("Missing required environment variable: TIMEZONE")
+            raise RuntimeError("Missing required environment variable: " + EnvVarName.TIMEZONE.name)
 
         # Latitude
         latitude = getEnvVar(EnvVarName.LATITUDE)
         if isEmpty(latitude):
-            raise RuntimeError("Missing required environment variable: LATITUDE")
+            raise RuntimeError("Missing required environment variable: " + EnvVarName.LATITUDE.name)
 
         # Longitude
         longitude = getEnvVar(EnvVarName.LONGITUDE)
         if isEmpty(longitude):
-            raise RuntimeError("Missing required environment variable: LONGITUDE")
+            raise RuntimeError("Missing required environment variable: " + EnvVarName.LONGITUDE.name)
 
         # Location
         location = getEnvVar(EnvVarName.LOCATION)
         if isEmpty(location):
-            raise RuntimeError("Missing required environment variable: LOCATION")
+            raise RuntimeError("Missing required environment variable: " + EnvVarName.LOCATION.name)
 
         self.location = LocationInfo(location, region, tz, latitude, longitude)
 
@@ -125,7 +126,7 @@ class SolarTimeTask(object):
         )
         self.LOGGER.info("A message will be tweeted!")
         self.LOGGER.info(message)
-        # TODO: TWEET the message!
+        TwitterUtil.tweet(message)
         return
 
 
