@@ -2,6 +2,10 @@
 
 A bot that tweets about the weather.
 
+## Capabilities
+
+- Solar Times (sunrise, noon, sunset)
+
 ## Quick Start
 
 In order to use this application with Twitter, developer credentials are required. Get them [here](https://developer.twitter.com/).
