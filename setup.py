@@ -4,8 +4,8 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name="wxtwitterbot-jnsnkrllive",
-    version="0.0.1",
+    name="wxtwitterbot",
+    version="0.1.0",
     author="Karl Jansen",
     author_email="jnsnkrl@live.com",
     description="Wx Twitter Bot",
