@@ -9,6 +9,7 @@ if sys.version_info < MIN_PYTHON:
     sys.exit("Python %s.%s or later is required.\n" % MIN_PYTHON)
 
 from envvarname import EnvVarName
+from tasks.lunartime import LunarTimeTask
 from tasks.solartime import SolarTimeTask
 from util import getEnvVar, isEmpty, loadEnvVars
 
@@ -54,7 +55,8 @@ threading.excepthook = threadExceptionHook
 
 LOGGER.info("Application startup complete!")
 
-SolarTimeTask()
+#SolarTimeTask()
+LunarTimeTask()
 
 signal.signal(signal.SIGINT, sigintHandler)
 

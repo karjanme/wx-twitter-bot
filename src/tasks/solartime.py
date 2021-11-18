@@ -6,18 +6,19 @@ import threading
 
 from astral import LocationInfo
 from astral.sun import sun
+from const import DATA_FILE_EXT
 from datetime import date, datetime, timedelta
 from envvarname import EnvVarName
 from pytz import timezone
 from twitter import TwitterUtil
 from typing import Dict
-from util import getEnvVar, isEmpty
+from util import getEnvVar, initDataDir, isEmpty
 
 
 class SolarTimeTask(object):
 
     LOGGER = logging.getLogger()
-    _FILE_EXT = ".json"
+    _TASK_NAME = "solartime"
     _DATE_FORMAT = "%b %d, %Y"
     _TIME_FORMAT = "%I:%M %p"
     _MESSAGE_TEMPLATE = "Hello {}! Today is {}. Sunrise is at {}, Solar Noon is at {}, and Sunset is at {}."
@@ -27,13 +28,13 @@ class SolarTimeTask(object):
         Constructor for the Solar Time Task. This task is responsible for
         determining the desired information to publish.
         """
-        self._thread = threading.Thread(name="solartime", target=self._run, args=())
+        self._thread = threading.Thread(name=self._TASK_NAME, target=self._run, args=())
         self._thread.daemon = True                            # Daemonize thread
         self._thread.start()                                  # Start the execution
 
 
     def _run(self):
-        self.LOGGER.info("Starting the '" + self._thread.name + "' task")
+        self.LOGGER.info("Starting the '" + self._TASK_NAME + "' task")
         self._setup()
 
         """ Routine that runs forever """
@@ -70,16 +71,7 @@ class SolarTimeTask(object):
 
     def _setup(self):
         # Data Directory
-        data_dir_root = getEnvVar(EnvVarName.DATA_DIR)
-        if isEmpty(data_dir_root):
-            data_dir_root = "./data/"  # Default data directory
-        if not(data_dir_root.endswith("/")):
-            data_dir_root += "/"
-
-        self._data_dir = data_dir_root + self._thread.name + "/"
-
-        if not(os.path.exists(self._data_dir)):
-            os.makedirs(self._data_dir, exist_ok=True)
+        self._data_dir = initDataDir(self._thread.name)
 
         # Region
         region = getEnvVar(EnvVarName.REGION)
@@ -154,14 +146,14 @@ class SolarTimeTask(object):
 
 
     def _loadSolarTime(self) -> Dict:
-        with open(self._data_dir + "solartime" + self._FILE_EXT, 'r+') as fp:
+        with open(self._data_dir + self._TASK_NAME + DATA_FILE_EXT, 'r+') as fp:
             # TODO: convert datetime string into datetime object
             solar_time = json.load(fp)
             return solar_time
 
 
     def _saveSolarTime(self, solar_time: Dict) -> None:
-        fw = open(self._data_dir + "solartime" + self._FILE_EXT, 'w+')
+        fw = open(self._data_dir + self._TASK_NAME + DATA_FILE_EXT, 'w+')
         json.dump(solar_time, fw, default=self._dumpConverter, indent=2)
         fw.close()
 
