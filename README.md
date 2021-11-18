@@ -5,6 +5,7 @@ A bot that tweets about the weather.
 ## Capabilities
 
 - Solar Times (sunrise, noon, sunset)
+- Lunar Times (moonrise, phase, moonset)
 
 ## Quick Start
 
