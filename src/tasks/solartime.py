@@ -1,15 +1,15 @@
 import json
 import logging
-import os
-import time
 import threading
 
 from astral import LocationInfo
 from astral.sun import sun
 from const import DATA_FILE_EXT
-from datetime import date, datetime, timedelta
+from datetime import datetime, timedelta
 from envvarname import EnvVarName
+from pathlib import Path
 from pytz import timezone
+from time import sleep
 from twitter import TwitterUtil
 from typing import Dict
 from util import getEnvVar, initDataDir, isEmpty
@@ -22,6 +22,7 @@ class SolarTimeTask(object):
     _DATE_FORMAT = "%b %d, %Y"
     _TIME_FORMAT = "%I:%M %p"
     _MESSAGE_TEMPLATE = "Hello {}! Today is {}. Sunrise is at {}, Solar Noon is at {}, and Sunset is at {}."
+    _THRESHOLD_SECONDS = 3600
 
     def __init__(self):
         """
@@ -58,9 +59,9 @@ class SolarTimeTask(object):
                     continue
 
             sunrise_today = solar_time_today["sunrise"]
-            one_hour_before_sunrise_today = sunrise_today - timedelta(hours=1)
-            if (self.now < one_hour_before_sunrise_today or sunrise_today < self.now):
-                self.LOGGER.info("Now is not within the hour before sunrise today")
+            threshold_before_sunrise_today = sunrise_today - timedelta(seconds=self._THRESHOLD_SECONDS)
+            if (self.now < threshold_before_sunrise_today or sunrise_today < self.now):
+                self.LOGGER.info("Now is not within the threshold before sunrise today")
                 self._sleep(solar_time_today)
                 continue
 
@@ -119,7 +120,6 @@ class SolarTimeTask(object):
         self.LOGGER.info("A message will be tweeted!")
         self.LOGGER.info(message)
         TwitterUtil.tweet(message)
-        return
 
 
     def _sleep(self, solar_time_today: Dict) -> None:
@@ -130,26 +130,31 @@ class SolarTimeTask(object):
 
         seconds_until_sunrise_today = (sunrise_today - self.now).total_seconds()
 
-        if (seconds_until_sunrise_today > 3600):
+        if (seconds_until_sunrise_today > self._THRESHOLD_SECONDS):
             self.LOGGER.info("Sleeping until later today")
-            sleep_seconds = seconds_until_sunrise_today - 3600
+            sleep_seconds = seconds_until_sunrise_today - self._THRESHOLD_SECONDS
         else:
             self.LOGGER.info("Sleeping until tomorrow")
             tomorrow = self.today + timedelta(days=1)
             solar_time_tomorrow = sun(self.location.observer, date=tomorrow, tzinfo=self.location.timezone)
             sunrise_tomorrow = solar_time_tomorrow["sunrise"]
             seconds_until_sunrise_tomorrow = (sunrise_tomorrow - self.now).total_seconds()
-            sleep_seconds = seconds_until_sunrise_tomorrow - 3600
+            sleep_seconds = seconds_until_sunrise_tomorrow - self._THRESHOLD_SECONDS
 
         self.LOGGER.info("Sleep for {:.0f} seconds".format(sleep_seconds))
-        time.sleep(sleep_seconds)
+        sleep(sleep_seconds)
 
 
     def _loadSolarTime(self) -> Dict:
-        with open(self._data_dir + self._TASK_NAME + DATA_FILE_EXT, 'r+') as fp:
-            # TODO: convert datetime string into datetime object
-            solar_time = json.load(fp)
-            return solar_time
+        filePath = Path(self._data_dir + self._TASK_NAME + DATA_FILE_EXT)
+        filePath.touch(exist_ok=True)
+        with open(filePath, 'r') as fp:
+            try: 
+                # TODO: convert datetime string into datetime object
+                solar_time = json.load(fp)
+                return solar_time
+            except:
+                return None
 
 
     def _saveSolarTime(self, solar_time: Dict) -> None:
