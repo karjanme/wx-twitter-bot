@@ -1,23 +1,25 @@
 import json
 import logging
-import os
-import time
 import threading
 
-from const import DATA_FILE_EXT
-from datetime import date, datetime, timedelta
+from const import DATA_FILE_EXT, UTC
+from datetime import datetime, timedelta
 from envvarname import EnvVarName
+from pathlib import Path
 from pylunar import MoonInfo
 from pytz import timezone, utc
+from time import sleep
 from typing import Dict
-from util import decToDegMinSec, getEnvVar, initDataDir, isEmpty, tupleToDatetime
+from util import decToDegMinSec, getEnvVar, initDataDir, isEmpty, tupleToDateTime
 
 
 class LunarTimeTask(object):
 
     LOGGER = logging.getLogger()
     _TASK_NAME = "lunartime"
-    _MESSAGE_TEMPLATE = "Hello {}! The moon will be {} illuminated. Moonrise is at {} and Moonset is at {}."
+    _TIME_FORMAT = "%I:%M %p"
+    _MESSAGE_TEMPLATE = "Hello {}! The moon will be {}% illuminated. Moonrise is at {} and Moonset is at {}."
+    _THRESHOLD_SECONDS = 3600
 
     def __init__(self):
         """
@@ -35,19 +37,33 @@ class LunarTimeTask(object):
 
         """ Routine that runs forever """
         while True:
-            tzone = timezone(self._timezone_str)
-            now = datetime.now(tz=tzone)
-            lunar_time_now = self._getLunarTime(now)
-            print(now.isoformat())
-            print(lunar_time_now)
-            next_transit = lunar_time_now["transit"]
-            lunar_time_next = self._getLunarTime(next_transit)
-            print(next_transit.isoformat())
-            print(lunar_time_next)
-            for x in range(28):
-                asOfDatetime = now + timedelta(days=x)
-                #self._getLunarTime(asOfDatetime)
-            self._sleep()
+            self.now = self._tzone.localize(datetime.now())
+
+            self.LOGGER.info("Getting lunar times for now {}".format(self.now.isoformat()))
+            lunar_time_current = self._getLunarTimeCurrent()
+            moonrise_current = lunar_time_current["rise"]
+
+            # Get prior 'lunar_time' from the saved data file
+            lunar_time_from_file = self._loadLunarTime()
+
+            if (lunar_time_from_file):
+                transit_from_file = datetime.fromisoformat(lunar_time_from_file["transit"])
+                self.LOGGER.info("Got lunar times from file for {}".format(transit_from_file.isoformat()))
+                if (transit_from_file == lunar_time_current["transit"]):
+                    self.LOGGER.info("Current lunar times are the same as the file")
+                    rise_from_file = datetime.fromisoformat(lunar_time_from_file["rise"])
+                    self._sleep(moonrise_current)
+                    continue
+
+            threshold_before_moonrise_current = moonrise_current - timedelta(seconds=self._THRESHOLD_SECONDS)
+            if (self.now < threshold_before_moonrise_current or moonrise_current < self.now):
+                self.LOGGER.info("Now is not within the threshold before moonrise")
+                self._sleep(moonrise_current)
+                continue
+
+            self._tweetLunarTime(lunar_time_current)
+            self._saveLunarTime(lunar_time_current)
+            self._sleep(moonrise_current)
 
 
     def _setup(self):
@@ -78,12 +94,17 @@ class LunarTimeTask(object):
         self._timezone_str = getEnvVar(EnvVarName.TIMEZONE)
         if isEmpty(self._timezone_str):
             raise RuntimeError("Missing required environment variable: " + EnvVarName.TIMEZONE.name)
+        self._tzone = timezone(self._timezone_str)
         self.LOGGER.debug("Timezone = " + self._timezone_str)
 
 
+    def _getLunarTimeCurrent(self) -> Dict:
+        lunar_time_now = self._getLunarTime(self.now)
+        return self._getLunarTime(lunar_time_now["transit"])
+
+
     def _getLunarTime(self, asOf: datetime) -> Dict:
-        tzone = timezone(self._timezone_str)
-        utcAsOf = asOf.astimezone(utc)
+        utcAsOf = utc.normalize(asOf)
         utcAsOfTuple = (
             utcAsOf.year,
             utcAsOf.month,
@@ -94,9 +115,9 @@ class LunarTimeTask(object):
         )
         moon_info = MoonInfo(self._latitude_dms, self._longitude_dms)
         moon_info.update(utcAsOfTuple)
-        lunarInfos = moon_info.rise_set_times(self._timezone_str)
+        lunarInfos = moon_info.rise_set_times(UTC)
         lunarTimeDict = {
-            "asOf": utcAsOf,
+            "asOf": asOf,
             "rise": None,
             "transit": None,
             "fraction": moon_info.fractional_phase(),
@@ -106,39 +127,64 @@ class LunarTimeTask(object):
             infoType = lunarInfo[0]
             infoTuple = lunarInfo[1]
             if (infoType == "rise" and type(infoTuple) is tuple):
-                #print("rise: " + ",".join(map(str, infoTuple)))
-                lunarTimeDict["rise"] = tupleToDatetime(infoTuple, tzone)
+                lunarTimeDict["rise"] = tupleToDateTime(infoTuple, utc, self._tzone)
             if (infoType == "transit" and type(infoTuple) is tuple):
-                #print("rise: " + ",".join(map(str, infoTuple)))
-                lunarTimeDict["transit"] = tupleToDatetime(infoTuple, tzone)
+                lunarTimeDict["transit"] = tupleToDateTime(infoTuple, utc, self._tzone)
             if (infoType == "set" and type(infoTuple) is tuple):
-                #print("set: " + ",".join(map(str, infoTuple)))
-                lunarTimeDict["set"] = tupleToDatetime(infoTuple, tzone)
-
+                lunarTimeDict["set"] = tupleToDateTime(infoTuple, utc, self._tzone)
         return lunarTimeDict
 
 
-    def _tweetLunarTime(self) -> None:
-        # TODO: the end goal!
-        return
+    def _tweetLunarTime(self, lunar_time) -> None:
+        moonrise = lunar_time["rise"]
+        lunar_time_date = moonrise.date()
+
+        if (self.now.date() != lunar_time_date):
+            self.LOGGER.warn("The lunar times provided are not for now -- skip tweet message")
+            return
+
+        message = self._MESSAGE_TEMPLATE.format(
+            self._location_str,
+            str(round(100 * lunar_time["fraction"])),
+            lunar_time["rise"].strftime(self._TIME_FORMAT),
+            lunar_time["set"].strftime(self._TIME_FORMAT)
+        )
+        self.LOGGER.info("A message will be tweeted!")
+        self.LOGGER.info(message)
+        #TwitterUtil.tweet(message)  # TODO: enable after testing is complete
 
 
-    def _sleep(self) -> None:
-        # If tomorrow has a moonrise, then sleep until 1 hour before
-        # If tomorrow does not have a moonrise, then sleep until noon tomorrow
-        sleep_seconds = 60*60  # 1 hour (TODO: something better?)
+    def _sleep(self, moonrise: datetime) -> None:
+        seconds_until_moonrise = (moonrise - self.now).total_seconds()
+
+        if (seconds_until_moonrise > self._THRESHOLD_SECONDS):
+            self.LOGGER.info("Sleeping until later this time")
+            sleep_seconds = seconds_until_moonrise - self._THRESHOLD_SECONDS
+        else:
+            self.LOGGER.info("Sleeping until next time")
+            next_lunar = moonrise + timedelta(days=1)
+            lunar_time_next = self._getLunarTime(next_lunar)
+            moonrise_next = lunar_time_next["rise"]
+            seconds_until_moonrise_next = (moonrise_next - self.now).total_seconds()
+            sleep_seconds = seconds_until_moonrise_next - self._THRESHOLD_SECONDS
+
         self.LOGGER.info("Sleep for {:.0f} seconds".format(sleep_seconds))
-        time.sleep(sleep_seconds)
+        sleep(sleep_seconds)
 
 
     def _loadLunarTime(self) -> Dict:
-        with open(self._data_dir + self._TASK_NAME + DATA_FILE_EXT, 'r+') as fp:
-            # TODO: convert datetime string into datetime object
-            lunar_time = json.load(fp)
-            return lunar_time
+        filePath = Path(self._data_dir + self._TASK_NAME + DATA_FILE_EXT)
+        filePath.touch(exist_ok=True)
+        with open(filePath, 'r') as fp:
+            try: 
+                # TODO: convert datetime string into datetime object
+                lunar_time = json.load(fp)
+                return lunar_time
+            except:
+                return None
 
 
-    def _saveSolarTime(self, lunar_time: Dict) -> None:
+    def _saveLunarTime(self, lunar_time: Dict) -> None:
         fw = open(self._data_dir + self._TASK_NAME + DATA_FILE_EXT, 'w+')
         json.dump(lunar_time, fw, default=self._dumpConverter, indent=2)
         fw.close()
