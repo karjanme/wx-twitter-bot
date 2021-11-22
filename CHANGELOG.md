@@ -7,7 +7,7 @@ This project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
 ### Added
-- The ability to tweet periodically about moonrise, moon phase, and moonset
+- The ability to tweet periodically about moonrise, illumination, and moonset
 
 ## Release 0.1.0 [2020-12-31]
 ### Added
