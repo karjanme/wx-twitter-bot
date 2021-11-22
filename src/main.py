@@ -55,7 +55,7 @@ threading.excepthook = threadExceptionHook
 
 LOGGER.info("Application startup complete!")
 
-#SolarTimeTask()
+SolarTimeTask()
 LunarTimeTask()
 
 signal.signal(signal.SIGINT, sigintHandler)
