@@ -52,12 +52,13 @@ def threadExceptionHook(args):
 loadEnvVars()
 LOGGER = createLogger()  # Requires that environment variables are loaded
 threading.excepthook = threadExceptionHook
+signal.signal(signal.SIGINT, sigintHandler)
 
 LOGGER.info("Application startup complete!")
 
 SolarTimeTask()
 
-signal.signal(signal.SIGINT, sigintHandler)
+LOGGER.info("All tasks have been delegated to background threads.")
 
 while True:
     # Keep this thread alive so it can be used to terminate the application
