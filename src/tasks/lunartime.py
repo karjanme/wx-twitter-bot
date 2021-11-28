@@ -136,13 +136,6 @@ class LunarTimeTask(object):
 
 
     def _tweetLunarTime(self, lunar_time) -> None:
-        moonrise = lunar_time["rise"]
-        lunar_time_date = moonrise.date()
-
-        if (self.now.date() != lunar_time_date):
-            self.LOGGER.warn("The lunar times provided are not for now -- skip tweet message")
-            return
-
         message = self._MESSAGE_TEMPLATE.format(
             self._location_str,
             str(round(100 * lunar_time["fraction"])),
