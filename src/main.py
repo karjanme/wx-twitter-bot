@@ -1,6 +1,7 @@
 import logging
 import os
 import threading
+import time
 import signal
 import sys
 
@@ -59,4 +60,5 @@ SolarTimeTask()
 signal.signal(signal.SIGINT, sigintHandler)
 
 while True:
-    continue
+    # Keep this thread alive so it can be used to terminate the application
+    time.sleep(1)
