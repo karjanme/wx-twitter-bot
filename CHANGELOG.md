@@ -9,6 +9,10 @@ This project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Added
 - The ability to tweet periodically about moonrise, illumination, and moonset
 
+## Release 0.1.1 [2021-11-28]
+### Fixed
+- Repeatadly sleep the main thread while keeping it alive to reduce CPU load
+
 ## Release 0.1.0 [2020-12-31]
 ### Added
 - The ability to tweet daily about sunrise, solar noon, and sunset
