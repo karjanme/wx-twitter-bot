@@ -51,7 +51,6 @@ class LunarTimeTask(object):
                 self.LOGGER.info("Got lunar times from file for {}".format(transit_from_file.isoformat()))
                 if (transit_from_file == lunar_time_current["transit"]):
                     self.LOGGER.info("Current lunar times are the same as the file")
-                    rise_from_file = datetime.fromisoformat(lunar_time_from_file["rise"])
                     self._sleep(moonrise_current)
                     continue
 
@@ -115,7 +114,7 @@ class LunarTimeTask(object):
         )
         moon_info = MoonInfo(self._latitude_dms, self._longitude_dms)
         moon_info.update(utcAsOfTuple)
-        lunarInfos = moon_info.rise_set_times(UTC)
+        lunarInfos = moon_info.rise_set_times(self._timezone_str)
         lunarTimeDict = {
             "asOf": asOf,
             "rise": None,
@@ -127,11 +126,11 @@ class LunarTimeTask(object):
             infoType = lunarInfo[0]
             infoTuple = lunarInfo[1]
             if (infoType == "rise" and type(infoTuple) is tuple):
-                lunarTimeDict["rise"] = tupleToDateTime(infoTuple, utc, self._tzone)
+                lunarTimeDict["rise"] = tupleToDateTime(infoTuple, self._tzone)
             if (infoType == "transit" and type(infoTuple) is tuple):
-                lunarTimeDict["transit"] = tupleToDateTime(infoTuple, utc, self._tzone)
+                lunarTimeDict["transit"] = tupleToDateTime(infoTuple, self._tzone)
             if (infoType == "set" and type(infoTuple) is tuple):
-                lunarTimeDict["set"] = tupleToDateTime(infoTuple, utc, self._tzone)
+                lunarTimeDict["set"] = tupleToDateTime(infoTuple, self._tzone)
         return lunarTimeDict
 
 
