@@ -69,17 +69,16 @@ def initDataDir(dirName: str) -> None:
     return dataDir
 
 
-def tupleToDateTime(dtTuple: tuple, tzInput: timezone, tzOutput: timezone) -> datetime:
+def tupleToDateTime(dtTuple: tuple, tzone: timezone) -> datetime:
     """
     Converts a given typle representation of a datetime into a datatime object.
 
     Parameterrs:
         dtTuple (tuple): A tuple representation of the datetime (YYYY, m, d, H, M, S)
-        tzInput (timezone): The timezone of the input tuple
-        tzOutput (timezone): The timezone of the datetime output
+        tzone (timezone): The timezone of the datetime represented by the tuple
 
     Returns:
-        datetime: representationn of the given tuple
+        datetime: timezone aware representationn of the given tuple
     """
 
     if (len(dtTuple) != 6):
@@ -105,5 +104,4 @@ def tupleToDateTime(dtTuple: tuple, tzInput: timezone, tzOutput: timezone) -> da
     if (second < 0 or 59 < second):
         raise ValueError("SECOND must be between (inclusive) 0 and 59")
 
-    inputDateTime = datetime(year, month, day, hour, minute, second, tzinfo=tzInput)
-    return tzOutput.normalize(inputDateTime)
+    return tzone.localize(datetime(year, month, day, hour, minute, second))
