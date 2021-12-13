@@ -3,7 +3,7 @@ import logging
 import threading
 
 from const import DATA_FILE_EXT, UTC
-from datetime import datetime, timedelta
+from datetime import datetime, time, timedelta
 from envvarname import EnvVarName
 from pathlib import Path
 from pylunar import MoonInfo
@@ -98,11 +98,15 @@ class LunarTimeTask(object):
 
 
     def _getLunarTimeCurrent(self) -> Dict:
-        lunar_time_now = self._getLunarTime(self.now)
-        return self._getLunarTime(lunar_time_now["transit"])
+        lunar_time_now = self._getLunarTime(self.now, True)
+        if (lunar_time_now["transit"] < self.now):
+            lunarTimeTomorrow = self._getLunarTimeTomorrow(self.now)
+            return self._getLunarTime(lunarTimeTomorrow["transit"], True)
+
+        return self._getLunarTime(lunar_time_now["transit"], True)
 
 
-    def _getLunarTime(self, asOf: datetime) -> Dict:
+    def _getLunarTime(self, asOf: datetime, doFinalCorrections: bool) -> Dict:
         utcAsOf = utc.normalize(asOf)
         utcAsOfTuple = (
             utcAsOf.year,
@@ -112,26 +116,70 @@ class LunarTimeTask(object):
             utcAsOf.minute,
             utcAsOf.second
         )
+
         moon_info = MoonInfo(self._latitude_dms, self._longitude_dms)
         moon_info.update(utcAsOfTuple)
-        lunarInfos = moon_info.rise_set_times(self._timezone_str)
+        moon_times = moon_info.rise_set_times(self._timezone_str)
+        return self._getLunarTimeFromMoonTimes(moon_times, asOf, moon_info.fractional_phase(), doFinalCorrections)
+
+
+    def _getLunarTimeFromMoonTimes(self,
+                                   moonTimes: list,
+                                   asOf: datetime,
+                                   fractPhase: float,
+                                   doFinalCorrections: bool) -> Dict:
         lunarTimeDict = {
             "asOf": asOf,
             "rise": None,
             "transit": None,
-            "fraction": moon_info.fractional_phase(),
+            "fraction": fractPhase,
             "set": None
         }
-        for lunarInfo in lunarInfos:
-            infoType = lunarInfo[0]
-            infoTuple = lunarInfo[1]
+
+        for moonTime in moonTimes:
+            infoType = moonTime[0]
+            infoTuple = moonTime[1]
             if (infoType == "rise" and type(infoTuple) is tuple):
                 lunarTimeDict["rise"] = tupleToDateTime(infoTuple, self._tzone)
             if (infoType == "transit" and type(infoTuple) is tuple):
                 lunarTimeDict["transit"] = tupleToDateTime(infoTuple, self._tzone)
             if (infoType == "set" and type(infoTuple) is tuple):
                 lunarTimeDict["set"] = tupleToDateTime(infoTuple, self._tzone)
+
+        # Fixes for lunar times that do not occur on the asOf date
+        if ((lunarTimeDict["rise"] is None)
+         or (lunarTimeDict["transit"] is None)
+         or (lunarTimeDict["set"] is None)):
+            tomorrowLunarTime = self._getLunarTimeTomorrow(asOf)
+            if (lunarTimeDict["rise"] is None):
+                lunarTimeDict["rise"] = tomorrowLunarTime["rise"]
+            if (lunarTimeDict["transit"] is None):
+                lunarTimeDict["transit"] = tomorrowLunarTime["transit"]
+            if (lunarTimeDict["set"] is None):
+                lunarTimeDict["set"] = tomorrowLunarTime["set"]
+
+        # Final corrections (only is prescribed)
+        if (doFinalCorrections):
+            if (lunarTimeDict["rise"] > lunarTimeDict["transit"]):
+                yesterdayLunarTime = self._getLunarTimeYesterday(asOf)
+                lunarTimeDict["rise"] = yesterdayLunarTime["rise"]
+            if (lunarTimeDict["set"] < lunarTimeDict["transit"]):
+                tomorrowLunarTime = self._getLunarTimeTomorrow(asOf)
+                lunarTimeDict["set"] = tomorrowLunarTime["set"]
+
         return lunarTimeDict
+
+
+    def _getLunarTimeYesterday(self, asOfToday: datetime) -> Dict:
+        yesterdayDate = asOfToday.date() - timedelta(days=1)
+        yesterdayDateTime = self._tzone.localize(datetime.combine(yesterdayDate, time(23,59,59)))
+        return self._getLunarTime(yesterdayDateTime, False)
+
+
+    def _getLunarTimeTomorrow(self, asOfToday: datetime) -> Dict:
+        tomorrowDate = asOfToday.date() + timedelta(days=1)
+        tomorrowDateTime = self._tzone.localize(datetime.combine(tomorrowDate, time()))
+        return self._getLunarTime(tomorrowDateTime, False)
 
 
     def _tweetLunarTime(self, lunar_time) -> None:
@@ -155,7 +203,7 @@ class LunarTimeTask(object):
         else:
             self.LOGGER.info("Sleeping until next time")
             next_lunar = moonrise + timedelta(days=1)
-            lunar_time_next = self._getLunarTime(next_lunar)
+            lunar_time_next = self._getLunarTime(next_lunar, False)
             moonrise_next = lunar_time_next["rise"]
             seconds_until_moonrise_next = (moonrise_next - self.now).total_seconds()
             sleep_seconds = seconds_until_moonrise_next - self._THRESHOLD_SECONDS
