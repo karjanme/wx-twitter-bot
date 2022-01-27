@@ -191,7 +191,7 @@ class LunarTimeTask(object):
         )
         self.LOGGER.info("A message will be tweeted!")
         self.LOGGER.info(message)
-        #TwitterUtil.tweet(message)  # TODO: enable after testing is complete
+        TwitterUtil.tweet(message)
 
 
     def _sleep(self, moonrise: datetime) -> None:

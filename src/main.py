@@ -55,7 +55,7 @@ LOGGER = createLogger()  # Requires that environment variables are loaded
 threading.excepthook = threadExceptionHook
 signal.signal(signal.SIGINT, sigintHandler)
 
-LOGGER.info("Application startup complete!")
+LOGGER.info("Application initialization complete!")
 
 SolarTimeTask()
 LunarTimeTask()
