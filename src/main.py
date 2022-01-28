@@ -10,6 +10,7 @@ if sys.version_info < MIN_PYTHON:
     sys.exit("Python %s.%s or later is required.\n" % MIN_PYTHON)
 
 from envvarname import EnvVarName
+from tasks.lunartime import LunarTimeTask
 from tasks.solartime import SolarTimeTask
 from util import getEnvVar, isEmpty, loadEnvVars
 
@@ -54,9 +55,10 @@ LOGGER = createLogger()  # Requires that environment variables are loaded
 threading.excepthook = threadExceptionHook
 signal.signal(signal.SIGINT, sigintHandler)
 
-LOGGER.info("Application startup complete!")
+LOGGER.info("Application initialization complete!")
 
 SolarTimeTask()
+LunarTimeTask()
 
 LOGGER.info("All tasks have been delegated to background threads.")
 

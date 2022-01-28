@@ -5,19 +5,20 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="wxtwitterbot",
-    version="0.1.1",
+    version="0.2.0",
     author="Karl Jansen",
     author_email="jnsnkrl@live.com",
     license="MIT",
     description="Wx Twitter Bot",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/jnsnkrllive/wx-twitter-bot",
+    url="https://github.com/karjanme/wx-twitter-bot",
     package_dir={'wxtwitterbot': 'src'},
     packages=['wxtwitterbot', 'wxtwitterbot.tasks'],
     python_requires='>=3.8',
     install_requires=[
         "astral",
+        "pylunar",
         "python-dotenv",
         "pytz",
         "tweepy",
