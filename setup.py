@@ -12,7 +12,7 @@ setuptools.setup(
     description="Wx Twitter Bot",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/jnsnkrllive/wx-twitter-bot",
+    url="https://github.com/karjanme/wx-twitter-bot",
     package_dir={'wxtwitterbot': 'src'},
     packages=['wxtwitterbot', 'wxtwitterbot.tasks'],
     python_requires='>=3.8',
