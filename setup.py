@@ -18,6 +18,7 @@ setuptools.setup(
     python_requires='>=3.8',
     install_requires=[
         "astral",
+        "pylunar",
         "python-dotenv",
         "pytz",
         "tweepy",

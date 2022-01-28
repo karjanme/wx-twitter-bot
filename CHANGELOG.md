@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 This project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Added
+- The ability to tweet periodically about moonrise, illumination, and moonset
 
 ## Release 0.1.1 [2021-11-28]
 ### Fixed
