@@ -9,6 +9,7 @@ from pathlib import Path
 from pylunar import MoonInfo
 from pytz import timezone, utc
 from time import sleep
+from twitter import TwitterUtil
 from typing import Dict
 from util import decToDegMinSec, getEnvVar, initDataDir, isEmpty, tupleToDateTime
 

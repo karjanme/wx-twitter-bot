@@ -7,6 +7,10 @@ This project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
 
+## Release 0.2.1 [2022-02-01]
+### Fixed
+- Bug that prevented lunar informtion from being tweeted
+
 ## Release 0.2.0 [2022-01-28]
 ### Added
 - The ability to tweet periodically about moonrise, illumination, and moonset
