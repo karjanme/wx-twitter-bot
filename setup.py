@@ -16,6 +16,7 @@ setuptools.setup(
     package_dir={'wxtwitterbot': 'src'},
     packages=['wxtwitterbot', 'wxtwitterbot.tasks'],
     python_requires='>=3.8',
+    scripts=['start-app'],
     install_requires=[
         "astral",
         "pylunar",
