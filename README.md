@@ -15,8 +15,8 @@ In order to use this application with Twitter, developer credentials are require
 
 | Name | Description |
 | ---- | ----------- |
-| `DATA_DIR` | Specifies the directory where the data files will be stored |
-| `LOG_DIR` | Specifies the directory where the log file will exist |
+| `DATA_DIR` | Specifies the directory where the data files will be stored (optional, default = `./data/`) |
+| `LOG_DIR` | Specifies the directory where the log file will exist (optional, default = `./log/`) |
 | `LOG_LEVEL` | Specifies the level of logging to use when executing the application (e.g. "DEBUG") |
 | `LOCATION` | A label for the location associated the this instance of the application |
 | `REGION` | A label for the location's region associated with this instance of the application |

@@ -7,8 +7,8 @@ from envvarname import EnvVarName
 from pytz import timezone
 
 
-def loadEnvVars() -> None:
-  load_dotenv()
+def loadEnvVars(path_to_dotenv: str) -> None:
+  load_dotenv(path_to_dotenv)
 
 
 def getEnvVar(name: EnvVarName) -> str:
@@ -22,10 +22,10 @@ def getEnvVar(name: EnvVarName) -> str:
         string: 
     """
 
-    value = os.getenv(name.value, "")
-    if (value is None):  # TODO: the value will never been None, because the line before uses ""
+    value = os.getenv(name.value, None)
+    if (value is None):
+        print("WARNING: The environment variable " + name.value + " is not set")
         #LOGGER: The environment variable is not set
-        value = value
 
     return value
 

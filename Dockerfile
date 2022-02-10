@@ -2,15 +2,21 @@
 
 FROM python:3.8-slim
 
-VOLUME ["/data"]
-VOLUME ["/env"]
-VOLUME ["/log"]
+RUN useradd --create-home --shell /bin/bash wxtwitterbot
+
+VOLUME ["/app"]
+
+WORKDIR /home/wxtwitterbot
+COPY dist/ dist/
 
 RUN python -m pip install --upgrade pip
+RUN pip install dist/wxtwitterbot-0.2.2-py3-none-any.whl
+
+#RUN pip install wxtwitterbot
+
+COPY start-app start-app
 
 WORKDIR /app
 
-RUN pip install wxtwitterbot
-
-COPY start-app start-app
-#CMD start-app
+USER wxtwitterbot
+CMD /home/wxtwitterbot/start-app

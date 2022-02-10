@@ -41,27 +41,30 @@ def createLogger():
 
 
 def sigintHandler(sig, frame):
+    LOGGER = logging.getLogger()
     LOGGER.info("Shutting down, goodbye!")
     sys.exit(0)
 
 
-def threadExceptionHook(args):
+def threadExceptionHook(self, args):
+    LOGGER = logging.getLogger()
     LOGGER.error(str(args.exc_value))
 
 
-### MAIN ###
-loadEnvVars()
-LOGGER = createLogger()  # Requires that environment variables are loaded
-threading.excepthook = threadExceptionHook
-signal.signal(signal.SIGINT, sigintHandler)
+#### MAIN ####
+def start(path_to_dotenv: str):
+    loadEnvVars(path_to_dotenv)
+    LOGGER = createLogger()  # Requires that environment variables are loaded
+    threading.excepthook = threadExceptionHook
+    signal.signal(signal.SIGINT, sigintHandler)
 
-LOGGER.info("Application initialization complete!")
+    LOGGER.info("Application initialization complete!")
 
-SolarTimeTask()
-LunarTimeTask()
+    SolarTimeTask()
+    LunarTimeTask()
 
-LOGGER.info("All tasks have been delegated to background threads.")
+    LOGGER.info("All tasks have been delegated to background threads.")
 
-while True:
-    # Keep this thread alive so it can be used to terminate the application
-    time.sleep(1)
+    while True:
+        # Keep this thread alive so it can be used to terminate the application
+        time.sleep(1)
