@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="wxtwitterbot",
-    version="1.0.2-alpha",
+    version="1.0.3-alpha",
     author="Karl Jansen",
     author_email="jnsnkrl@live.com",
     license="MIT",
@@ -13,8 +13,8 @@ setuptools.setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/karjanme/wx-twitter-bot",
-    package_dir={'': 'src'},
-    packages=['', 'tasks'],
+    package_dir={'wxtwitterbot': 'src'},
+    packages=['wxtwitterbot', 'wxtwitterbot.tasks'],
     python_requires='>=3.8',
     scripts=['start-app'],
     install_requires=[
