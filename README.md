@@ -11,6 +11,13 @@ A bot that tweets about the weather.
 
 In order to use this application with Twitter, developer credentials are required. Get them [here](https://developer.twitter.com/).
 
+### Docker
+
+This application can be run in a docker container using a published image.
+
+Required volume mapping:
+`/app` should point to a directory on your host which contains the `.env` file. This is also a good parent for the data and log sub-directories which are required for the application.
+
 ## Environment Variables
 
 | Name | Description |

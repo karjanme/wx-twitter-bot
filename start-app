@@ -1,3 +1,5 @@
 #!/usr/bin/env python
+
+# script to start the application in the docker container
 from wxtwitterbot.main import start
 start(path_to_dotenv="/app/.env")
