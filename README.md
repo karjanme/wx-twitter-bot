@@ -26,7 +26,7 @@ The following variables can be set using a `.env` file placed in the application
 
 | Name | Description |
 | ---- | ----------- |
-| `LOG_LEVEL` | Specifies the level of logging to use when executing the application (e.g. "DEBUG") |
+| `LOG_LEVEL` | (optional) Specifies the [level](https://docs.python.org/3/library/logging.html#levels) of logging to use when executing the application (Default = "INFO") |
 | `LOCATION` | A label for the location associated the this instance of the application |
 | `REGION` | A label for the location's region associated with this instance of the application |
 | `TIMEZONE` | The timezone name for the location associated with this instance of the application from the "tz database" |
