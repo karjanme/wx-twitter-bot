@@ -1,6 +1,7 @@
 from datetime import MAXYEAR
 import os
 
+from const import APP_ROOT_DIR
 from datetime import datetime, MINYEAR, MAXYEAR
 from dotenv import load_dotenv
 from envvarname import EnvVarName
@@ -8,7 +9,7 @@ from pytz import timezone
 
 
 def loadEnvVars() -> None:
-  load_dotenv()
+  load_dotenv(APP_ROOT_DIR + ".env")
 
 
 def getEnvVar(name: EnvVarName) -> str:
@@ -22,11 +23,7 @@ def getEnvVar(name: EnvVarName) -> str:
         string: 
     """
 
-    value = os.getenv(name.value, "")
-    if (value is None):  # TODO: the value will never been None, because the line before uses ""
-        #LOGGER: The environment variable is not set
-        value = value
-
+    value = os.getenv(name.value, None)
     return value
 
 
@@ -55,18 +52,16 @@ def decToDegMinSec(dd: float) -> tuple:
 
 
 def initDataDir(dirName: str) -> None:
-    dirRoot = getEnvVar(EnvVarName.DATA_DIR)
-    if isEmpty(dirRoot):
-        dirRoot = "./data/"  # Default data directory
-    if not(dirRoot.endswith("/")):
-        dirRoot += "/"
-
-    dataDir = dirRoot + dirName + "/"
+    dataDir = APP_ROOT_DIR + "data/" + dirName + "/"
 
     if not(os.path.exists(dataDir)):
         os.makedirs(dataDir, exist_ok=True)
 
     return dataDir
+
+
+def getLogDir() -> str:
+    return APP_ROOT_DIR + "log/"
 
 
 def tupleToDateTime(dtTuple: tuple, tzone: timezone) -> datetime:

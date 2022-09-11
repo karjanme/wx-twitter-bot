@@ -12,16 +12,11 @@ if sys.version_info < MIN_PYTHON:
 from envvarname import EnvVarName
 from tasks.lunartime import LunarTimeTask
 from tasks.solartime import SolarTimeTask
-from util import getEnvVar, isEmpty, loadEnvVars
+from util import getEnvVar, getLogDir, loadEnvVars
 
 
 def createLogger():
-    log_directory = getEnvVar(EnvVarName.LOG_DIR)
-    if isEmpty(log_directory):
-        log_directory = "./log/"  # Default logging directory
-    if not(log_directory.endswith("/")):
-        log_directory += "/"
-
+    log_directory = getLogDir()
     log_filename = log_directory + "wxtwitterbot.log"
     os.makedirs(os.path.dirname(log_filename), exist_ok=True)
 

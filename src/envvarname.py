@@ -11,8 +11,6 @@ class EnvVarName(Enum):
         return name
 
     # TODO: Documentation
-    DATA_DIR = auto()
-    LOG_DIR = auto()
     LOG_LEVEL = auto()
     LOCATION = auto()
     REGION = auto()
