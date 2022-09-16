@@ -1,15 +1,20 @@
-from datetime import MAXYEAR
 import os
 
-from const import APP_ROOT_DIR
+from const import APP_ROOT_DEFAULT
 from datetime import datetime, MINYEAR, MAXYEAR
 from dotenv import load_dotenv
 from envvarname import EnvVarName
+from pathlib import Path
 from pytz import timezone
 
 
-def loadEnvVars() -> None:
-  load_dotenv(APP_ROOT_DIR + ".env")
+globalAppRootDir = APP_ROOT_DEFAULT
+
+
+def loadEnvVars(appRootDir: Path) -> None:
+    global globalAppRootDir
+    globalAppRootDir = appRootDir
+    load_dotenv(Path.joinpath(appRootDir, ".env"))
 
 
 def getEnvVar(name: EnvVarName) -> str:
@@ -51,8 +56,8 @@ def decToDegMinSec(dd: float) -> tuple:
     return (round(degrees),round(minutes),round(seconds))
 
 
-def initDataDir(dirName: str) -> None:
-    dataDir = APP_ROOT_DIR + "data/" + dirName + "/"
+def initDataDir(dirName: str) -> Path:
+    dataDir = Path.joinpath(globalAppRootDir, "data", dirName)
 
     if not(os.path.exists(dataDir)):
         os.makedirs(dataDir, exist_ok=True)
@@ -60,8 +65,8 @@ def initDataDir(dirName: str) -> None:
     return dataDir
 
 
-def getLogDir() -> str:
-    return APP_ROOT_DIR + "log/"
+def getLogDir() -> Path:
+    return Path.joinpath(globalAppRootDir, "log")
 
 
 def tupleToDateTime(dtTuple: tuple, tzone: timezone) -> datetime:

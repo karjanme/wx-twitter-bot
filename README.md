@@ -11,6 +11,17 @@ A bot that tweets about the weather.
 
 In order to use this application with Twitter, developer credentials are required. Get them [here](https://developer.twitter.com/).
 
+### Command Line
+
+To run this application via the command line, execute the following from the project root directory:
+
+```python src/main.py [options]```
+
+Options:
+| Name | Description |
+| ---- | ----------- |
+| --app-root | Path to the application root directory which contains the `.env` file. |
+
 ### Docker
 
 This application can be run in a docker container using a published image.
