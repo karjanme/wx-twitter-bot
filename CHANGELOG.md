@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 This project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## Release 1.0.0 [2022-09-18]
 ### Added
 - The ability to deploy the application via an image in a docker container
 - The ability to specify the path to the application's root directory
