@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="wxtwitterbot",
-    version="1.0.3-beta",
+    version="1.0.4-beta",
     author="Karl Jansen",
     author_email="jnsnkrl@live.com",
     license="MIT",
