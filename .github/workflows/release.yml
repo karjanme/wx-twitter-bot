@@ -1,20 +1,19 @@
 name: Release Workflow
 
 on:
+  release:
+    types: [published]
   push:
     tags:
-        - 'v*'
+    - 'v*'
 
 env:
   REGISTRY: ghcr.io
 
 jobs:
-   release:
-    name: Release Job
+  package:
+    name: Package Job
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
     steps:
     - name: Checkout
       uses: actions/checkout@v2
@@ -36,9 +35,16 @@ jobs:
       run: |
         pip install twine
         twine upload dist/*
-    - name: Sleep
-      run: sleep 30s
-      shell: bash
+
+  docker:
+    name: Docker Job
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
     - name: Login to container registry
       uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9
       with:

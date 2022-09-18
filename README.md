@@ -15,16 +15,25 @@ In order to use this application with Twitter, developer credentials are require
 
 To run this application via the command line, execute the following from the project root directory:
 
-```python src/main.py [options]```
+```
+python src/main.py [options]
+```
 
 Options:
 | Name | Description |
 | ---- | ----------- |
-| --app-root | Path to the application root directory which contains the `.env` file. |
+| `--app-root` | Path to the application root directory which contains the `.env` file. |
 
 ### Docker
 
 This application can be run in a docker container using a published image.
+
+For example:
+```
+docker pull ghcr.io/karjanme/wx-twitter-bot:latest
+```
+
+Configure the `TZ` environment variable when setting up the container.
 
 Required volume mapping:
 | Volume | Description |
