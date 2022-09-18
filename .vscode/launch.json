@@ -9,7 +9,7 @@
       "type": "python",
       "request": "launch",
       "program": "src/main.py",
-      "args": ["--app-root", "/app"],
+      "args": ["--app-root", "app"],
       "console": "integratedTerminal"
     }
   ]
