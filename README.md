@@ -11,13 +11,42 @@ A bot that tweets about the weather.
 
 In order to use this application with Twitter, developer credentials are required. Get them [here](https://developer.twitter.com/).
 
+### Command Line
+
+To run this application via the command line, execute the following from the project root directory:
+
+```
+python src/main.py [options]
+```
+
+Options:
+| Name | Description |
+| ---- | ----------- |
+| `--app-root` | Path to the application root directory which contains the `.env` file. |
+
+### Docker
+
+This application can be run in a docker container using a published image.
+
+For example:
+```
+docker pull ghcr.io/karjanme/wx-twitter-bot:latest
+```
+
+Configure the `TZ` environment variable when setting up the container.
+
+Required volume mapping:
+| Volume | Description |
+| ------ | ----------- |
+| `/app` | Must point to a directory on your host which contains the `.env` file. <br /> The appliation will create subdirectories to facilitate runtime needs. |
+
 ## Environment Variables
+
+The following variables can be set using a `.env` file placed in the application root directory.
 
 | Name | Description |
 | ---- | ----------- |
-| `DATA_DIR` | Specifies the directory where the data files will be stored |
-| `LOG_DIR` | Specifies the directory where the log file will exist |
-| `LOG_LEVEL` | Specifies the level of logging to use when executing the application (e.g. "DEBUG") |
+| `LOG_LEVEL` | (optional) Specifies the [level](https://docs.python.org/3/library/logging.html#levels) of logging to use when executing the application (Default = "INFO") |
 | `LOCATION` | A label for the location associated the this instance of the application |
 | `REGION` | A label for the location's region associated with this instance of the application |
 | `TIMEZONE` | The timezone name for the location associated with this instance of the application from the "tz database" |

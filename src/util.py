@@ -1,14 +1,20 @@
-from datetime import MAXYEAR
 import os
 
+from const import APP_ROOT_DEFAULT
 from datetime import datetime, MINYEAR, MAXYEAR
 from dotenv import load_dotenv
 from envvarname import EnvVarName
+from pathlib import Path
 from pytz import timezone
 
 
-def loadEnvVars() -> None:
-  load_dotenv()
+globalAppRootDir = APP_ROOT_DEFAULT
+
+
+def loadEnvVars(appRootDir: Path) -> None:
+    global globalAppRootDir
+    globalAppRootDir = appRootDir
+    load_dotenv(Path.joinpath(appRootDir, ".env"))
 
 
 def getEnvVar(name: EnvVarName) -> str:
@@ -22,11 +28,7 @@ def getEnvVar(name: EnvVarName) -> str:
         string: 
     """
 
-    value = os.getenv(name.value, "")
-    if (value is None):  # TODO: the value will never been None, because the line before uses ""
-        #LOGGER: The environment variable is not set
-        value = value
-
+    value = os.getenv(name.value, None)
     return value
 
 
@@ -54,19 +56,17 @@ def decToDegMinSec(dd: float) -> tuple:
     return (round(degrees),round(minutes),round(seconds))
 
 
-def initDataDir(dirName: str) -> None:
-    dirRoot = getEnvVar(EnvVarName.DATA_DIR)
-    if isEmpty(dirRoot):
-        dirRoot = "./data/"  # Default data directory
-    if not(dirRoot.endswith("/")):
-        dirRoot += "/"
-
-    dataDir = dirRoot + dirName + "/"
+def initDataDir(dirName: str) -> Path:
+    dataDir = Path.joinpath(globalAppRootDir, "data", dirName)
 
     if not(os.path.exists(dataDir)):
         os.makedirs(dataDir, exist_ok=True)
 
     return dataDir
+
+
+def getLogDir() -> Path:
+    return Path.joinpath(globalAppRootDir, "log")
 
 
 def tupleToDateTime(dtTuple: tuple, tzone: timezone) -> datetime:

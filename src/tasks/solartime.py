@@ -146,7 +146,7 @@ class SolarTimeTask(object):
 
 
     def _loadSolarTime(self) -> Dict:
-        filePath = Path(self._data_dir + self._TASK_NAME + DATA_FILE_EXT)
+        filePath = Path.joinpath(self._data_dir, self._TASK_NAME + DATA_FILE_EXT)
         filePath.touch(exist_ok=True)
         with open(filePath, 'r') as fp:
             try: 
@@ -158,7 +158,7 @@ class SolarTimeTask(object):
 
 
     def _saveSolarTime(self, solar_time: Dict) -> None:
-        fw = open(self._data_dir + self._TASK_NAME + DATA_FILE_EXT, 'w+')
+        fw = open(Path.joinpath(self._data_dir, self._TASK_NAME + DATA_FILE_EXT), 'w+')
         json.dump(solar_time, fw, default=self._dumpConverter, indent=2)
         fw.close()
 

@@ -1,9 +1,13 @@
+import argparse
 import logging
 import os
 import threading
 import time
 import signal
 import sys
+
+from const import APP_ROOT_DEFAULT
+from pathlib import Path
 
 MIN_PYTHON = (3, 8)
 if sys.version_info < MIN_PYTHON:
@@ -12,17 +16,12 @@ if sys.version_info < MIN_PYTHON:
 from envvarname import EnvVarName
 from tasks.lunartime import LunarTimeTask
 from tasks.solartime import SolarTimeTask
-from util import getEnvVar, isEmpty, loadEnvVars
+from util import getEnvVar, getLogDir, loadEnvVars
 
 
 def createLogger():
-    log_directory = getEnvVar(EnvVarName.LOG_DIR)
-    if isEmpty(log_directory):
-        log_directory = "./log/"  # Default logging directory
-    if not(log_directory.endswith("/")):
-        log_directory += "/"
-
-    log_filename = log_directory + "wxtwitterbot.log"
+    log_directory = getLogDir()
+    log_filename = Path.joinpath(log_directory, "wxtwitterbot.log")
     os.makedirs(os.path.dirname(log_filename), exist_ok=True)
 
     log_format = "%(asctime)s | %(threadName)-12.12s | %(levelname)-8.8s | %(message)s"
@@ -50,7 +49,10 @@ def threadExceptionHook(args):
 
 
 ### MAIN ###
-loadEnvVars()
+parser = argparse.ArgumentParser()
+parser.add_argument('--app-root', type=Path, default=APP_ROOT_DEFAULT, help='path to application root directory')
+args = parser.parse_args()
+loadEnvVars(args.app_root)
 LOGGER = createLogger()  # Requires that environment variables are loaded
 threading.excepthook = threadExceptionHook
 signal.signal(signal.SIGINT, sigintHandler)
