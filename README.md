@@ -1,3 +1,8 @@
+[release-image]: https://img.shields.io/github/v/release/karjanme/wx-twitter-bot
+[release-url]: https://ghcr.io/karjanme/wx-twitter-bot
+
+[![Release][release-image]][release-url]
+
 # Wx Twitter Bot
 
 A bot that tweets about the weather.
