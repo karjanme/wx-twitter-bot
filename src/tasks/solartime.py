@@ -12,7 +12,7 @@ from pytz import timezone
 from time import sleep
 from twitter import TwitterUtil
 from typing import Dict
-from util import getEnvVar, initDataDir, isEmpty
+from util import generateHashtag, getEnvVar, initDataDir, isEmpty
 
 
 class SolarTimeTask(object):
@@ -21,7 +21,7 @@ class SolarTimeTask(object):
     _TASK_NAME = "solartime"
     _DATE_FORMAT = "%b %d, %Y"
     _TIME_FORMAT = "%I:%M %p"
-    _MESSAGE_TEMPLATE = "Hello {}! Today is {}. Sunrise is at {}, Solar Noon is at {}, and Sunset is at {}."
+    _MESSAGE_TEMPLATE = "Hello {}! Today is {}. Sunrise is at {}, Solar Noon is at {}, and Sunset is at {}.{}"
     _THRESHOLD_SECONDS = 3600
 
     def __init__(self):
@@ -115,7 +115,8 @@ class SolarTimeTask(object):
             self.today.strftime(self._DATE_FORMAT),
             solar_time["sunrise"].strftime(self._TIME_FORMAT),
             solar_time["noon"].strftime(self._TIME_FORMAT),
-            solar_time["sunset"].strftime(self._TIME_FORMAT)
+            solar_time["sunset"].strftime(self._TIME_FORMAT),
+            generateHashtag()
         )
         self.LOGGER.info("A message will be tweeted!")
         self.LOGGER.info(message)
