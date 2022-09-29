@@ -69,6 +69,14 @@ def getLogDir() -> Path:
     return Path.joinpath(globalAppRootDir, "log")
 
 
+def generateHashtag() -> str:
+    hashtag = getEnvVar(EnvVarName.TWITTER_HASHTAG)
+    if (isEmpty(hashtag)):
+        return ""
+
+    return " #" + hashtag
+
+
 def tupleToDateTime(dtTuple: tuple, tzone: timezone) -> datetime:
     """
     Converts a given typle representation of a datetime into a datatime object.

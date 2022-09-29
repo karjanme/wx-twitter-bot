@@ -11,7 +11,7 @@ from pytz import timezone, utc
 from time import sleep
 from twitter import TwitterUtil
 from typing import Dict
-from util import decToDegMinSec, getEnvVar, initDataDir, isEmpty, tupleToDateTime
+from util import decToDegMinSec, generateHashtag, getEnvVar, initDataDir, isEmpty, tupleToDateTime
 
 
 class LunarTimeTask(object):
@@ -19,7 +19,7 @@ class LunarTimeTask(object):
     LOGGER = logging.getLogger()
     _TASK_NAME = "lunartime"
     _TIME_FORMAT = "%I:%M %p"
-    _MESSAGE_TEMPLATE = "Hello {}! The moon will be {}% illuminated. Moonrise is at {} and Moonset is at {}."
+    _MESSAGE_TEMPLATE = "Hello {}! The moon will be {}% illuminated. Moonrise is at {} and Moonset is at {}.{}"
     _THRESHOLD_SECONDS = 3600
 
     def __init__(self):
@@ -188,7 +188,8 @@ class LunarTimeTask(object):
             self._location_str,
             str(round(100 * lunar_time["fraction"])),
             lunar_time["rise"].strftime(self._TIME_FORMAT),
-            lunar_time["set"].strftime(self._TIME_FORMAT)
+            lunar_time["set"].strftime(self._TIME_FORMAT),
+            generateHashtag()
         )
         self.LOGGER.info("A message will be tweeted!")
         self.LOGGER.info(message)
