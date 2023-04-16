@@ -17,6 +17,7 @@ setuptools.setup(
     packages=['wxtwitterbot', 'wxtwitterbot.tasks'],
     python_requires='>=3.8',
     install_requires=[
+        "airnowpy",
         "astral",
         "pylunar",
         "python-dotenv",
