@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 This project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Changed
+- Updated version of 3rd party library used to interact with the Twitter API
 
 ## Release 1.1.0 [2022-09-30]
 ### Added

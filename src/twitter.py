@@ -1,7 +1,7 @@
 import logging
 
 from envvarname import EnvVarName
-from tweepy import API, OAuthHandler
+from tweepy import API, OAuth1UserHandler
 from util import getEnvVar, isEmpty
 
 
@@ -51,11 +51,9 @@ class TwitterUtil(object):
             TwitterUtil.LOGGER.error(message)
             raise RuntimeError(message)
 
-        auth = OAuthHandler(consumer_key, consumer_secret)
-        auth.set_access_token(access_token, access_token_secret)
+        auth = OAuth1UserHandler(consumer_key, consumer_secret, access_token, access_token_secret)
         api = API(auth,
-            wait_on_rate_limit=True,
-            wait_on_rate_limit_notify=True)
+            wait_on_rate_limit=True)
 
         try:
             api.verify_credentials()
