@@ -80,9 +80,10 @@ class SolarTimeTask(object):
             raise RuntimeError("Missing required environment variable: " + EnvVarName.REGION.name)
 
         # Timezone
-        tz = timezone(getEnvVar(EnvVarName.TIMEZONE))
+        tzString = getEnvVar(EnvVarName.TIMEZONE)
         if isEmpty(tz):
             raise RuntimeError("Missing required environment variable: " + EnvVarName.TIMEZONE.name)
+        tz = timezone(tzString)
 
         # Latitude
         latitude = getEnvVar(EnvVarName.LATITUDE)
