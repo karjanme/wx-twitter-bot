@@ -2,7 +2,7 @@ import json
 import logging
 import threading
 
-from const import DATA_FILE_EXT, UTC
+from const import DATA_FILE_EXT
 from datetime import datetime, time, timedelta
 from envvarname import EnvVarName
 from pathlib import Path
