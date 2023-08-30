@@ -50,7 +50,17 @@ class TwitterUtil(object):
             message = "Environment Variable " + EnvVarName.TWITTER_ACCESS_TOKEN_SECRET.name + " is not set"
             TwitterUtil.LOGGER.error(message)
             raise RuntimeError(message)
+        
+        bearer_token = getEnvVar(EnvVarName.TWITTER_BEARER_TOKEN)
+        if (isEmpty(bearer_token)):
+            message = "Environment Variable " + EnvVarName.TWITTER_BEARER_TOKEN.name + " is not set"
+            TwitterUtil.LOGGER.error(message)
+            raise RuntimeError(message)
 
-        client = Client(consumer_key, consumer_secret, access_token, access_token_secret)
+        client = Client(consumer_key=consumer_key,
+                        consumer_secret=consumer_secret,
+                        access_token=access_token,
+                        access_token_secret=access_token_secret,
+                        bearer_token=bearer_token)
         TwitterUtil.LOGGER.info("Twitter API created successfully")
         return client
