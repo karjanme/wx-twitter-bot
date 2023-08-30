@@ -20,7 +20,7 @@ class TwitterUtil(object):
             api = TwitterUtil.createTwitterAPI()
             api.create_tweet(text=message)
         except Exception:
-            TwitterUtil.LOGGER.warn("Problem occurned while tweeting message")
+            TwitterUtil.LOGGER.exception("Problem occurned while tweeting message")
 
 
     @staticmethod
