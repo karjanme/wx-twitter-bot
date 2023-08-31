@@ -7,6 +7,9 @@ This project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
 
+### Fixed
+- Bug with how the Lunar Time task uses time zone
+
 ## Release 1.2.5 [2023-08-30]
 ### Fixed
 - Twitter API v2 requires a bearer token to authenticate
