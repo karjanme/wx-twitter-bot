@@ -7,6 +7,7 @@ This project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
 
+## Release 1.2.6 [2023-08-31]
 ### Fixed
 - Bug with how the Lunar Time task uses time zone
 
