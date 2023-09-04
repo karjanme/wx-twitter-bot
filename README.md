@@ -63,6 +63,7 @@ The following variables can be set using a `.env` file placed in the application
 | `TWITTER_CONSUMER_SECRET` | The consumer secret for the Twitter API |
 | `TWITTER_ACCESS_TOKEN` | The access token for the Twitter API |
 | `TWITTER_ACCESS_TOKEN_SECRET` | The access token secret for the Twitter API |
+| `TWITTER_BEARER_TOKEN` | The bearer token for the Twitter API |
 | `TWITTER_HASHTAG` | (optional) Text to be appended to all tweets as a [hashtag](https://help.twitter.com/en/using-twitter/how-to-use-hashtags) |
 
 ## License

@@ -6,18 +6,20 @@ import time
 import signal
 import sys
 
-from const import APP_ROOT_DEFAULT
+from datetime import datetime
 from pathlib import Path
+from pytz import timezone, utc
 
 MIN_PYTHON = (3, 8)
 if sys.version_info < MIN_PYTHON:
     sys.exit("Python %s.%s or later is required.\n" % MIN_PYTHON)
 
+from const import APP_ROOT_DEFAULT
 from envvarname import EnvVarName
 from tasks.airquality import AirQualityTask
 from tasks.lunartime import LunarTimeTask
 from tasks.solartime import SolarTimeTask
-from util import getEnvVar, getLogDir, loadEnvVars
+from util import getEnvVar, getLogDir, isEmpty, loadEnvVars
 
 
 def createLogger():
@@ -33,11 +35,20 @@ def createLogger():
     else:
         log_level = log_level.upper()
 
+    logging.Formatter.converter = loggingFormatterTZ
     logging.basicConfig(
         filename=log_filename,
         format=log_format,
         level=log_level)
     return logging.getLogger()
+
+
+def loggingFormatterTZ(*args):
+    tzString = getEnvVar(EnvVarName.TIMEZONE)
+    tz = utc
+    if (not isEmpty(tzString)):
+        tz = timezone(tzString)
+    return datetime.now(tz).timetuple()
 
 
 def sigintHandler(sig, frame):
