@@ -1,7 +1,7 @@
 import logging
 
 from envvarname import EnvVarName
-from tweepy import API, OAuthHandler
+from tweepy import Client
 from util import getEnvVar, isEmpty
 
 
@@ -18,13 +18,13 @@ class TwitterUtil(object):
     def tweet(message: str) -> None:
         try:
             api = TwitterUtil.createTwitterAPI()
-            api.update_status(message)
+            api.create_tweet(text=message)
         except Exception:
-            TwitterUtil.LOGGER.warn("Problem occurned while tweeting message")
+            TwitterUtil.LOGGER.exception("Problem occurned while tweeting message")
 
 
     @staticmethod
-    def createTwitterAPI() -> API:
+    def createTwitterAPI() -> Client:
         TwitterUtil.LOGGER.debug("Creating the Twitter API")
 
         consumer_key = getEnvVar(EnvVarName.TWITTER_CONSUMER_KEY)
@@ -50,18 +50,17 @@ class TwitterUtil(object):
             message = "Environment Variable " + EnvVarName.TWITTER_ACCESS_TOKEN_SECRET.name + " is not set"
             TwitterUtil.LOGGER.error(message)
             raise RuntimeError(message)
+        
+        bearer_token = getEnvVar(EnvVarName.TWITTER_BEARER_TOKEN)
+        if (isEmpty(bearer_token)):
+            message = "Environment Variable " + EnvVarName.TWITTER_BEARER_TOKEN.name + " is not set"
+            TwitterUtil.LOGGER.error(message)
+            raise RuntimeError(message)
 
-        auth = OAuthHandler(consumer_key, consumer_secret)
-        auth.set_access_token(access_token, access_token_secret)
-        api = API(auth,
-            wait_on_rate_limit=True,
-            wait_on_rate_limit_notify=True)
-
-        try:
-            api.verify_credentials()
-        except Exception as e:
-            TwitterUtil.LOGGER.error("Error creating Twitter API", exc_info=True)
-            raise e
-
+        client = Client(consumer_key=consumer_key,
+                        consumer_secret=consumer_secret,
+                        access_token=access_token,
+                        access_token_secret=access_token_secret,
+                        bearer_token=bearer_token)
         TwitterUtil.LOGGER.info("Twitter API created successfully")
-        return api
+        return client

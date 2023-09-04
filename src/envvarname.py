@@ -21,4 +21,5 @@ class EnvVarName(Enum):
     TWITTER_CONSUMER_SECRET = auto()
     TWITTER_ACCESS_TOKEN = auto()
     TWITTER_ACCESS_TOKEN_SECRET = auto()
+    TWITTER_BEARER_TOKEN = auto()
     TWITTER_HASHTAG = auto()

@@ -7,6 +7,34 @@ This project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
 
+## Release 1.2.6 [2023-08-31]
+### Fixed
+- Bug with how the Lunar Time task uses time zone
+
+## Release 1.2.5 [2023-08-30]
+### Fixed
+- Twitter API v2 requires a bearer token to authenticate
+
+## Release 1.2.4 [2023-08-29]
+### Fixed
+- Log the stack trace when exception is caught while using the Twitter API
+
+## Release 1.2.3 [2023-08-22]
+### Fixed
+- Bug with how the time zone is setup for use within the Solar Time task
+
+## Release 1.2.2 [2023-08-22]
+### Fixed
+- Use the application time zone for logging with UTC as backup default
+
+## Release 1.2.1 [2023-08-01]
+### Fixed
+- Use of Twitter API v2 to create a new tweet
+
+## Release 1.2.0 [2023-07-31]
+### Changed
+- Updated version of 3rd party library used to interact with the Twitter API
+
 ## Release 1.1.0 [2022-09-30]
 ### Added
 - The ability to configure a custom hashtag to append to each tweet

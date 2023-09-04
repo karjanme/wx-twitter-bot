@@ -2,7 +2,7 @@ import json
 import logging
 import threading
 
-from const import DATA_FILE_EXT, UTC
+from const import DATA_FILE_EXT
 from datetime import datetime, time, timedelta
 from envvarname import EnvVarName
 from pathlib import Path
@@ -38,7 +38,7 @@ class LunarTimeTask(object):
 
         """ Routine that runs forever """
         while True:
-            self.now = self._tzone.localize(datetime.now())
+            self.now = datetime.now(tz=self._tzone)
 
             self.LOGGER.info("Getting lunar times for now {}".format(self.now.isoformat()))
             lunar_time_current = self._getLunarTimeCurrent()
