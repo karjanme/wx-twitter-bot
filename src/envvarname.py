@@ -17,6 +17,10 @@ class EnvVarName(Enum):
     TIMEZONE = auto()
     LATITUDE = auto()
     LONGITUDE = auto()
+
+    # The key needed to access the AirNow API
+    AIRNOW_API_KEY = auto()
+
     TWITTER_CONSUMER_KEY = auto()
     TWITTER_CONSUMER_SECRET = auto()
     TWITTER_ACCESS_TOKEN = auto()

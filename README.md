@@ -58,7 +58,7 @@ The following variables can be set using a `.env` file placed in the application
 | `TIMEZONE` | The timezone name for the location associated with this instance of the application from the "tz database" |
 | `LATITUDE` | The latitude for the location associated with this application, decimal format |
 | `LONGITUDE` | The longitude for the location associated with this application, decimal format |
-| `AIR_NOW_API_KEY` | TODO |
+| `AIR_NOW_API_KEY` | The key for the [AirNow API](https://docs.airnowapi.org/) |
 | `TWITTER_CONSUMER_KEY` | The consumer key for the Twitter API |
 | `TWITTER_CONSUMER_SECRET` | The consumer secret for the Twitter API |
 | `TWITTER_ACCESS_TOKEN` | The access token for the Twitter API |
