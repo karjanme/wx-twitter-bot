@@ -4,7 +4,7 @@ import threading
 
 from airnowpy import API, Category, Observation
 from const import DATA_FILE_EXT
-from datetime import datetime
+from datetime import datetime, timedelta
 from envvarname import EnvVarName
 from pathlib import Path
 from pytz import timezone
@@ -49,11 +49,14 @@ class AirQualityTask(object):
             prior_air_quality = self._loadAirQualityFromFile()
             current_primary = self._getPrimaryObservation(observations)
 
-            if (prior_air_quality is None):
-                self._saveAirQuality(current_primary)
-            elif (prior_air_quality.category.getValue() != current_primary.category.getValue()):
-                self._tweetAirQuality(prior_air_quality, current_primary)
-                self._saveAirQuality(current_primary)
+            if (prior_air_quality is not None):
+                has_category_changed = prior_air_quality.category.getValue() != current_primary.category.getValue()
+                is_current_within_threshold_of_prior = prior_air_quality.timestamp + timedelta(hours=3) >= self.now
+                if (has_category_changed and is_current_within_threshold_of_prior):
+                    self._tweetAirQuality(prior_air_quality, current_primary)
+
+            # Always save the current primary observation
+            self._saveAirQuality(current_primary)
 
             # Go to sleep for a little while
             self._sleep()
