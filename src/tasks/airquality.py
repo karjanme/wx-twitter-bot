@@ -42,7 +42,7 @@ class AirQualityTask(object):
         while True:
             self.now = datetime.now(tz=self._tzone)
 
-            self.LOGGER.info("Getting air quality for now {}".format(self.now.isoformat()))
+            self.LOGGER.debug("Getting air quality for now {}".format(self.now.isoformat()))
             observations = self._getCurrentObservations()
 
             # Get prior 'air_quality' from the saved data file
@@ -145,7 +145,7 @@ class AirQualityTask(object):
 
     def _sleep(self) -> None:
         sleep_seconds = self._EXECUTION_INTERVAL_SECONDS
-        self.LOGGER.info("Sleep for {:.0f} seconds".format(sleep_seconds))
+        self.LOGGER.debug("Sleep for {:.0f} seconds".format(sleep_seconds))
         sleep(sleep_seconds)
 
 
