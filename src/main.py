@@ -16,6 +16,7 @@ if sys.version_info < MIN_PYTHON:
 
 from const import APP_ROOT_DEFAULT
 from envvarname import EnvVarName
+from tasks.airquality import AirQualityTask
 from tasks.lunartime import LunarTimeTask
 from tasks.solartime import SolarTimeTask
 from util import getEnvVar, getLogDir, isEmpty, loadEnvVars
@@ -72,6 +73,7 @@ LOGGER.info("Application initialization complete!")
 
 SolarTimeTask()
 LunarTimeTask()
+AirQualityTask()
 
 LOGGER.info("All tasks have been delegated to background threads.")
 

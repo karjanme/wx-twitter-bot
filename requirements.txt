@@ -1,3 +1,4 @@
+airnowpy==2.2.0
 astral==2.2
 pylunar==0.6.0
 python-dotenv==0.13.0

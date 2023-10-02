@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 This project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Added
+- The ability to tweet when the air quality level changes
 
 ## Release 1.2.6 [2023-08-31]
 ### Fixed
