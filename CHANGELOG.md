@@ -7,6 +7,9 @@ This project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
 
+### Fixed
+- Bump `airnowpy` from 2.2.0 to 2.2.1
+
 ## Release 1.3.0 [2023-10-01]
 ### Added
 - The ability to tweet when the air quality level changes
