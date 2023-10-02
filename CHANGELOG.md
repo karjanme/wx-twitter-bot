@@ -7,6 +7,7 @@ This project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
 
+## Release 1.3.2 [2023-10-01]
 ### Fixed
 - Bump `airnowpy` from 2.2.1 to 2.2.2
 
