@@ -21,7 +21,6 @@ class AirQualityTask(object):
 
     LOGGER = logging.getLogger()
     _TASK_NAME = "airquality"
-    _TIME_FORMAT = "%I:%M %p"
     _MESSAGE_TEMPLATE = "Hello {}! The air quality has {} from {} to {}.{}"
     _EXECUTION_INTERVAL_SECONDS = 360
 
