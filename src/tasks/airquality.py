@@ -21,7 +21,8 @@ class AirQualityTask(object):
 
     LOGGER = logging.getLogger()
     _TASK_NAME = "airquality"
-    _MESSAGE_TEMPLATE = "Hello {}! The air quality has {} from {} to {}.{}"
+    _TIME_FORMAT = "%I:%M %p"
+    _MESSAGE_TEMPLATE = "Hello {}! At {} the air quality {} from {} to {}.{}"
     _EXECUTION_INTERVAL_SECONDS = 360
 
     def __init__(self):
@@ -133,6 +134,7 @@ class AirQualityTask(object):
 
         message = self._MESSAGE_TEMPLATE.format(
             self._location_str,
+            current_observation.timestamp.astimezone(self._tzone).strftime(self._TIME_FORMAT),
             type_of_change,
             prior_observation.category.getLabel(),
             current_observation.category.getLabel(),
