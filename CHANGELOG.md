@@ -7,6 +7,7 @@ This project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
 
+## Release 1.3.3 [2023-10-02]
 ### Enhanced
 - Only save the air quality observation when a new one is received
 - Include the observation time when tweeting about air quality
