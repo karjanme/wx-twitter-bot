@@ -7,6 +7,7 @@ This project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
 
+## Release 1.3.4 [2023-10-04]
 ### Enhanced
 - Gracefully handle exceptions thrown when retrieving air quality observations
 
