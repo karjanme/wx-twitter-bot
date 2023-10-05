@@ -49,15 +49,17 @@ class AirQualityTask(object):
             prior_air_quality = self._loadAirQualityFromFile()
             current_primary = self._getPrimaryObservation(observations)
 
-            if (prior_air_quality is not None):
+            if (prior_air_quality is not None and current_primary is not None):
                 has_category_changed = prior_air_quality.category.getValue() != current_primary.category.getValue()
                 is_current_within_threshold_of_prior = prior_air_quality.timestamp + timedelta(hours=3) >= self.now
                 if (has_category_changed and is_current_within_threshold_of_prior):
                     self._tweetAirQuality(prior_air_quality, current_primary)
 
             # Save the current primary observation
-            if (prior_air_quality is None or current_primary.timestamp > prior_air_quality.timestamp):
-                self._saveAirQuality(current_primary)
+            if (current_primary is not None):
+                current_is_newer_than_prior = current_primary.timestamp > prior_air_quality.timestamp
+                if (prior_air_quality is None or current_is_newer_than_prior):
+                    self._saveAirQuality(current_primary)
 
             # Go to sleep for a little while
             self._sleep()
@@ -103,7 +105,11 @@ class AirQualityTask(object):
 
     def _getCurrentObservations(self) -> List[Observation]:
         api = API(self._api_key)
-        return api.getCurrentObservationByLatLon(self._latitude, self._longitude)
+        try:
+            return api.getCurrentObservationByLatLon(self._latitude, self._longitude)
+        except Exception:
+            self.LOGGER.exception("Problem occurned while retrieving current observations")
+            return list()
 
 
     def _getPrimaryObservation(self, observations: List[Observation]) -> Observation:
@@ -118,7 +124,9 @@ class AirQualityTask(object):
                 if (obs.parameterName > current_primary.parameterName):
                     current_primary = obs
 
-        self.LOGGER.debug("Current primary pollutant is " + current_primary.parameterName)
+        if (current_primary is not None):
+            self.LOGGER.debug("Current primary pollutant is " + current_primary.parameterName)
+
         return current_primary
 
 
