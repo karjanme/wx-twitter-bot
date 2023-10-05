@@ -7,6 +7,7 @@ This project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
 
+## Release 1.3.5 [2023-10-05]
 ### Fixed
 - Refactor core logic for air quality task
 
