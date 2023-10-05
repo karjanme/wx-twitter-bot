@@ -46,20 +46,32 @@ class AirQualityTask(object):
             observations = self._getCurrentObservations()
 
             # Get prior 'air_quality' from the saved data file
-            prior_air_quality = self._loadAirQualityFromFile()
-            current_primary = self._getPrimaryObservation(observations)
+            prior_observation = self._loadAirQualityFromFile()
+            current_observation = self._getPrimaryObservation(observations)
 
-            if (prior_air_quality is not None and current_primary is not None):
-                has_category_changed = prior_air_quality.category.getValue() != current_primary.category.getValue()
-                is_current_within_threshold_of_prior = prior_air_quality.timestamp + timedelta(hours=3) >= self.now
-                if (has_category_changed and is_current_within_threshold_of_prior):
-                    self._tweetAirQuality(prior_air_quality, current_primary)
+            if (current_observation is None):
+                self._sleep()
+                continue
 
-            # Save the current primary observation
-            if (current_primary is not None):
-                current_is_newer_than_prior = current_primary.timestamp > prior_air_quality.timestamp
-                if (prior_air_quality is None or current_is_newer_than_prior):
-                    self._saveAirQuality(current_primary)
+            # Save the current observation if there never was a prior recorded observation
+            if (prior_observation is None):
+                self._saveAirQuality(current_observation)
+                self._sleep()
+                continue
+
+            has_category_changed = prior_observation.category.getValue() != current_observation.category.getValue()
+            deadline_after_prior_observation = prior_observation.timestamp + timedelta(hours=2)
+            adjusted_current_timestamp = current_observation.timestamp.astimezone(self._tzone)
+            is_current_within_threshold_of_prior = adjusted_current_timestamp <= deadline_after_prior_observation
+            is_current_newer_than_prior = adjusted_current_timestamp > prior_observation.timestamp
+
+            # Determine if a message should be delivered
+            if (has_category_changed and is_current_within_threshold_of_prior and is_current_newer_than_prior):
+                self._tweetAirQuality(prior_observation, current_observation)
+
+            # Determine if the current observations should be saved
+            if (is_current_newer_than_prior):
+                self._saveAirQuality(current_observation)
 
             # Go to sleep for a little while
             self._sleep()
